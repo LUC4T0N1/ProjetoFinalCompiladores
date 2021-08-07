@@ -1,0 +1,22 @@
+programa
+
+  int a, b, c;
+  texto  t1;
+
+  leia(a);
+  leia(b);
+
+  c = 999;
+  a = 1 + 2 * 3 / b;
+  
+
+  se ( a > b ) {
+     escreva (c);
+  }
+  senao {
+     escreva (c);
+  }
+  
+  
+
+fimprog;
