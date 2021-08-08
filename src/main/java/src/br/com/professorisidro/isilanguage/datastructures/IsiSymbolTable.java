@@ -23,7 +23,11 @@ public class IsiSymbolTable {
 	public boolean initialized(String symbolName) {
 		return map.get(symbolName).isInitialized();
 	}
-	
+
+	public boolean used(String symbolName) {
+		return map.get(symbolName).isUsed();
+	}
+
 	public IsiSymbol get(String symbolName) {
 		return map.get(symbolName);
 	}

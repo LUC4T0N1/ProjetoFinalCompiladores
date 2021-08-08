@@ -4,11 +4,20 @@ public abstract class IsiSymbol {
 	
 	protected String name;
 	protected boolean initialized = false;
+	protected boolean used = false;
 	
 	public abstract String generateJavaCode();
 	public IsiSymbol(String name) {
 		this.name = name;
 		
+	}
+
+	public boolean isUsed() {
+		return used;
+	}
+
+	public void setUsed(boolean used) {
+		this.used = used;
 	}
 
 	public boolean isInitialized() {

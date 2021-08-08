@@ -49,6 +49,23 @@ grammar IsiLang;
         		symbolTable.get(id).setInitialized(true);
         	}
 
+    public void verificaSeFoiUsada(IsiSymbol id){
+            if (!id.isUsed()){
+                System.out.println("\nWARNING: Variable "+id.getName()+" was daclared but is not being used");
+            }
+        }
+
+    public void setarUsada(String id){
+                symbolTable.get(id).setUsed(true);
+            }
+
+    public void verificaTipo(String id, String expr){
+              IsiVariable var = (IsiVariable)symbolTable.get(id);
+              if (!var.verificaTipo(expr)){
+                  throw new IsiSemanticException("variable "+ id +" is being assigned as the wrong type");
+              }
+          }
+
 	public void exibeComandos(){
 		for (AbstractCommand c: program.getComandos()){
 			System.out.println(c);
@@ -63,7 +80,9 @@ grammar IsiLang;
 inicio_e_fim_do_programa	: 'programa' declarar_variaveis bloco  'fimprog.'
            {  program.setVarTable(symbolTable);
            	  program.setComandos(stack.pop());
-           	 
+              for(IsiSymbol var : symbolTable.getAll()){
+                    verificaSeFoiUsada(var);
+              }
            } 
 		;
 		
@@ -137,6 +156,7 @@ escrita	: 'escreva'
                  ( TEXTO { _writeID = _input.LT(-1).getText(); }
                  | NOME_VARIAVEL { verificaID(_input.LT(-1).getText());
                   verificaValorID(_input.LT(-1).getText());
+                  setarUsada(_input.LT(-1).getText());
 	                  _writeID = _input.LT(-1).getText();
                      } )
                  FECHA_PARENTESES
@@ -155,6 +175,7 @@ atribuicao	:  NOME_VARIAVEL { verificaID(_input.LT(-1).getText());
                expressoes
                PONTO_FINAL
                {
+                 verificaTipo(_exprID, _exprContent);
                	 CommandAtribuicao cmd = new CommandAtribuicao(_exprID, _exprContent);
                	 stack.peek().add(cmd);
                }
@@ -215,7 +236,10 @@ repeticao  :  'enquanto' ABRE_PARENTESES
 			
 expressoes		:  termo (OPERADORES  { _exprContent += _input.LT(-1).getText();} termo)*;
 			
-termo		: NOME_VARIAVEL { verificaID(_input.LT(-1).getText()); _exprContent += _input.LT(-1).getText(); verificaValorID(_input.LT(-1).getText()); }
+termo		: NOME_VARIAVEL { verificaID(_input.LT(-1).getText());
+                              _exprContent += _input.LT(-1).getText();
+                              verificaValorID(_input.LT(-1).getText());
+                              setarUsada(_input.LT(-1).getText()); }
             | 
               NUMERO_REAL
               {

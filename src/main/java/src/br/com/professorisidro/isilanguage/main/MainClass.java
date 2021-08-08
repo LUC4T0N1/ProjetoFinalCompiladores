@@ -30,7 +30,7 @@ public class MainClass {
 			
 			parser.inicio_e_fim_do_programa();
 			
-			System.out.println("Compilation Successful");
+			System.out.println("\nCompilation Successful");
 			
 			parser.exibeComandos();
 			

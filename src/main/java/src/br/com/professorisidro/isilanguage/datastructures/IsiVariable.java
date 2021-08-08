@@ -19,6 +19,21 @@ public class IsiVariable extends IsiSymbol {
 		return type;
 	}
 
+	public boolean verificaTipo(String valor) {
+		try {
+			Integer.parseInt(valor);
+			return type == INT;
+		}
+		catch (NumberFormatException ignored){}
+		try {
+			Double.parseDouble(valor);
+			return type == REAL;
+		}
+		catch (NumberFormatException ignored){}
+
+		return type == TEXT;
+	}
+
 	public void setType(int type) {
 		this.type = type;
 	}

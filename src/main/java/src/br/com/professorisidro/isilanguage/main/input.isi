@@ -1,8 +1,10 @@
 programa
 
-  real a.
-
+  real a, b, c.
+  int f.
   texto  t1, t2.
+
+  f := "2.0".
 
   escreva ("Digite t2 (texto)").
   leia(t2).
@@ -12,7 +14,7 @@ programa
   escreva ("Digite a (real)").
     leia(a).
     escreva ("a: ").
-    escreva (f).
+
 
   escreva ("Digite t1 (texto)").
   leia(t1).
