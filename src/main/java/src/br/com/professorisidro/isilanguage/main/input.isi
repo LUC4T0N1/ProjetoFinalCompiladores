@@ -1,22 +1,32 @@
 programa
 
-  int a, b, c;
-  texto  t1;
+  real a.
 
-  leia(a);
-  leia(b);
+  texto  t1, t2.
 
-  c = 999;
-  a = 1 + 2 * 3 / b;
-  
+  escreva ("Digite t2 (texto)").
+  leia(t2).
+  escreva ("t2: ").
+  escreva (t2).
 
-  se ( a > b ) {
-     escreva (c);
+  escreva ("Digite a (real)").
+    leia(a).
+    escreva ("a: ").
+    escreva (f).
+
+  escreva ("Digite t1 (texto)").
+  leia(t1).
+  escreva ("t1: ").
+  escreva (t1).
+
+  enquanto (a>3) fazer{
+    escreva ("enquanto").
   }
-  senao {
-     escreva (c);
-  }
-  
-  
 
-fimprog;
+  se(a>3) entao {
+   escreva("oi").
+  }senao{
+    escreva("tchau").
+  }
+
+fimprog.

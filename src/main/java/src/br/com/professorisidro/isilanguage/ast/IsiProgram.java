@@ -14,10 +14,12 @@ public class IsiProgram {
 
 	public void generateTarget() {
 		StringBuilder str = new StringBuilder();
-		str.append("import java.util.Scanner;\n");
+
+		str.append("import java.util.Locale;\n");
+		str.append("import java.util.Scanner;\n\n");
 		str.append("public class MainClass{ \n");
-		str.append("  public static void main(String args[]){\n ");
-		str.append("      Scanner _key = new Scanner(System.in);\n");
+		str.append("  public static void main(String[] args){\n ");
+		str.append("      Scanner scanner = new Scanner(System.in).useLocale(Locale.US);\n");
 		for (IsiSymbol symbol: varTable.getAll()) {
 			str.append(symbol.generateJavaCode()+"\n");
 		}

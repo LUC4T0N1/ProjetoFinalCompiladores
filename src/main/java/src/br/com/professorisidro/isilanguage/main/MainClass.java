@@ -28,7 +28,7 @@ public class MainClass {
 			// crio meu parser a partir desse tokenStream
 			parser = new IsiLangParser(tokenStream);
 			
-			parser.prog();
+			parser.inicio_e_fim_do_programa();
 			
 			System.out.println("Compilation Successful");
 			
