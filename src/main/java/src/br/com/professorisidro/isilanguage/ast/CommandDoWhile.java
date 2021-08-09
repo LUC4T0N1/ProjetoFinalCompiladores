@@ -2,23 +2,23 @@ package src.br.com.professorisidro.isilanguage.ast;
 
 import java.util.ArrayList;
 
-public class CommandRepeticao extends AbstractCommand {
+public class CommandDoWhile extends AbstractCommand {
 
     private String condition;
     private ArrayList<AbstractCommand> listaTrue;
 
-    public CommandRepeticao(String condition, ArrayList<AbstractCommand> lt) {
+    public CommandDoWhile(String condition, ArrayList<AbstractCommand> lt) {
         this.condition = condition;
         this.listaTrue = lt;
     }
     @Override
     public String generateJavaCode() {
         StringBuilder str = new StringBuilder();
-        str.append("       while("+condition+") {");
+        str.append("       do{");
         for (AbstractCommand cmd: listaTrue) {
             str.append("\n	").append(cmd.generateJavaCode());
         }
-        str.append("\n       }");
+        str.append("\n       }while(").append(condition).append(");");
         return str.toString();
     }
     @Override

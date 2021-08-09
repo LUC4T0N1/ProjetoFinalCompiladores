@@ -1,34 +1,45 @@
 programa
 
-  real a, b, c.
-  int f.
-  texto  t1, t2.
+  int b,c,d.
+  int a.
+  lista<int> x.
+  x.adc(2).
+  a := x.obter(0).
+  c := 2.
 
-  f := "2.0".
+  escreva ("Programa Teste").
+  escreva ("Digite A").
+  leia (a).
+  leia (b).
 
-  escreva ("Digite t2 (texto)").
-  leia(t2).
-  escreva ("t2: ").
-  escreva (t2).
-
-  escreva ("Digite a (real)").
-    leia(a).
-    escreva ("a: ").
-
-
-  escreva ("Digite t1 (texto)").
-  leia(t1).
-  escreva ("t1: ").
-  escreva (t1).
-
-  enquanto (a>3) fazer{
-    escreva ("enquanto").
+  se (c>2) entao
+  {
+  escreva(a).
+  }senao
+  {
+  escreva(a).
   }
 
-  se(a>3) entao {
-   escreva("oi").
-  }senao{
-    escreva("tchau").
+  enquanto (c > 2) fazer
+  {
+    escreva(a).
+    escreva(a).
+    escreva(a).
   }
+
+    fazer
+    {
+      escreva(a).
+      escreva(a).
+      escreva(a).
+    }enquanto (c > 2).
+
+escreva ("C e igual a ").
+escreva (c).
+
+d := c + b.
+
+escreva ("D e igual a ").
+escreva (d).
 
 fimprog.

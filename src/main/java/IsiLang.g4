@@ -12,6 +12,10 @@ grammar IsiLang;
 	import src.br.com.professorisidro.isilanguage.ast.CommandAtribuicao;
 	import src.br.com.professorisidro.isilanguage.ast.CommandDecisao;
 	import src.br.com.professorisidro.isilanguage.ast.CommandRepeticao;
+	import src.br.com.professorisidro.isilanguage.ast.CommandDoWhile;
+	import src.br.com.professorisidro.isilanguage.ast.CommandAdicionar;
+	import src.br.com.professorisidro.isilanguage.ast.CommandObter;
+	import src.br.com.professorisidro.isilanguage.ast.CommandAtribuirEObter;
 	import java.util.ArrayList;
 	import java.util.Stack;
 }
@@ -26,6 +30,7 @@ grammar IsiLang;
 	private ArrayList<AbstractCommand> curThread;
 	private Stack<ArrayList<AbstractCommand>> stack = new Stack<ArrayList<AbstractCommand>>();
 	private String _readID;
+	private String _readIDLista;
 	private String _writeID;
 	private String _exprID;
 	private String _exprContent;
@@ -61,7 +66,22 @@ grammar IsiLang;
 
     public void verificaTipo(String id, String expr){
               IsiVariable var = (IsiVariable)symbolTable.get(id);
-              if (!var.verificaTipo(expr)){
+              if (!var.verificaTipo(expr, symbolTable)){
+                  throw new IsiSemanticException("variable "+ id +" is being assigned as the wrong type");
+              }
+          }
+
+    public void verificaTipoELista(String id, String idLista){
+                IsiVariable var = (IsiVariable)symbolTable.get(id);
+                IsiVariable varLista = (IsiVariable)symbolTable.get(idLista);
+                if (!var.verificaTipoELista(varLista)){
+                    throw new IsiSemanticException("variable "+ id +" is being assigned as the wrong type");
+                }
+            }
+
+   public void verificaTipoLista(String id, String expr){
+              IsiVariable var = (IsiVariable)symbolTable.get(id);
+              if (!var.verificaTipoLista(expr, symbolTable)){
                   throw new IsiSemanticException("variable "+ id +" is being assigned as the wrong type");
               }
           }
@@ -120,6 +140,9 @@ declara_variavel :  tipos_variaveis NOME_VARIAVEL  {
 tipos_variaveis       : 'int' { _tipo = IsiVariable.INT;  }
                       | 'real'  { _tipo = IsiVariable.REAL;  }
                       | 'texto'  { _tipo = IsiVariable.TEXT;  }
+                      | 'lista<int>'  { _tipo = IsiVariable.LISTA_INT;  }
+                      | 'lista<texto>'  { _tipo = IsiVariable.LISTA_TEXTO;  }
+                      | 'lista<real>'  { _tipo = IsiVariable.LISTA_REAL;  }
            ;
         
 bloco	: { curThread = new ArrayList<AbstractCommand>(); 
@@ -134,7 +157,16 @@ comandos : leitura
  		|  atribuicao
  		|  condicional
  		|  repeticao
+ 		|  obter
 		;
+
+obter	: NOME_VARIAVEL { _readID = _input.LT(-1).getText(); verificaID(_readID); verificaValorID(_readID);}
+               OBTER ABRE_PARENTESES (NUMERO_REAL) {_exprContent = _input.LT(-1).getText();} FECHA_PARENTESES PONTO_FINAL
+              {
+                CommandObter cmd = new CommandObter(_readID, _exprContent);
+                stack.peek().add(cmd);
+              }
+            ;
 
 leitura	: 'leia' ABRE_PARENTESES
                      NOME_VARIAVEL { verificaID(_input.LT(-1).getText());
@@ -167,18 +199,47 @@ escrita	: 'escreva'
                }
 			;
 			
-atribuicao	:  NOME_VARIAVEL { verificaID(_input.LT(-1).getText());
+atribuicao	:  (NOME_VARIAVEL { verificaID(_input.LT(-1).getText());
                     _exprID = _input.LT(-1).getText();
                     setarInitialized(_exprID);
                    } 
-               ATRIBUIR { _exprContent = ""; }
-               expressoes
-               PONTO_FINAL
+                 ATRIBUIR { _exprContent = ""; }
+                 expressoes
+                 PONTO_FINAL
                {
                  verificaTipo(_exprID, _exprContent);
                	 CommandAtribuicao cmd = new CommandAtribuicao(_exprID, _exprContent);
                	 stack.peek().add(cmd);
+               }) |
+                 (NOME_VARIAVEL { verificaID(_input.LT(-1).getText());
+                 _exprID = _input.LT(-1).getText();
+                 setarInitialized(_exprID);
                }
+                 PONTO_FINAL
+                 ADICIONAR { _exprContent = ""; }
+                 ABRE_PARENTESES
+                 expressoes
+                 FECHA_PARENTESES
+                 PONTO_FINAL
+               {
+                 verificaTipoLista(_exprID, _exprContent);
+                 CommandAdicionar cmd = new CommandAdicionar(_exprID, _exprContent);
+                 stack.peek().add(cmd);
+               })
+               |
+               (NOME_VARIAVEL { verificaID(_input.LT(-1).getText());
+                                    _exprID = _input.LT(-1).getText();
+                                    setarInitialized(_exprID);
+                                   }
+                                 ATRIBUIR { _exprContent = ""; }
+               NOME_VARIAVEL { _readIDLista = _input.LT(-1).getText(); verificaID(_readIDLista); verificaValorID(_readIDLista);}
+                              OBTER ABRE_PARENTESES (NUMERO_REAL) {_exprContent = _input.LT(-1).getText();} FECHA_PARENTESES PONTO_FINAL
+                             {
+                               verificaTipoELista(_exprID, _readIDLista);
+                               CommandAtribuirEObter cmd = new CommandAtribuirEObter(_exprID, _readIDLista, _exprContent);
+                               stack.peek().add(cmd);
+                             }
+             )
 			;
 			
 			
@@ -214,7 +275,7 @@ condicional  :  'se' ABRE_PARENTESES
                    )?
             ;
 
-repeticao  :  'enquanto' ABRE_PARENTESES
+repeticao  :  ('enquanto' ABRE_PARENTESES
                     (NOME_VARIAVEL | NUMERO_REAL | INTEIRO)    { _exprDecision = _input.LT(-1).getText(); }
                     OPERADORES_RELACIONAIS { _exprDecision += _input.LT(-1).getText(); }
                     (NOME_VARIAVEL | NUMERO_REAL | INTEIRO) {_exprDecision += _input.LT(-1).getText(); }
@@ -231,7 +292,27 @@ repeticao  :  'enquanto' ABRE_PARENTESES
                        listaTrue = stack.pop();
                        CommandRepeticao cmd = new CommandRepeticao(_exprDecision, listaTrue);
                        stack.peek().add(cmd);
-                    }
+                    }) |
+                    ('fazer'
+                    ABRE_CHAVES
+                        { curThread = new ArrayList<AbstractCommand>();
+                          stack.push(curThread);
+                        }
+                        (comandos)+
+
+                        FECHA_CHAVES
+                        {
+                           listaTrue = stack.pop();
+                           CommandDoWhile cmd = new CommandDoWhile(_exprDecision, listaTrue);
+                           stack.peek().add(cmd);
+                        }
+                    'enquanto'
+                    ABRE_PARENTESES
+                    (NOME_VARIAVEL | NUMERO_REAL | INTEIRO)    { _exprDecision = _input.LT(-1).getText(); }
+                    OPERADORES_RELACIONAIS { _exprDecision += _input.LT(-1).getText(); }
+                    (NOME_VARIAVEL | NUMERO_REAL | INTEIRO) {_exprDecision += _input.LT(-1).getText(); }
+                    FECHA_PARENTESES
+                    PONTO_FINAL)
             ;
 			
 expressoes		:  termo (OPERADORES  { _exprContent += _input.LT(-1).getText();} termo)*;
@@ -268,10 +349,14 @@ PONTO_FINAL	: '.';
 OPERADORES	: '+' | '-' | '*' | '/';
 	
 ATRIBUIR : ':=' ;
+
+ADICIONAR : 'adc' ;
 	 
 VIRGULA  : ',';
      
 ABRE_CHAVES  : '{';
+
+OBTER : '.obter';
      
 FECHA_CHAVES  : '}';
 

@@ -23,9 +23,9 @@ public class CommandDecisao extends AbstractCommand {
 		}
 		str.append("\n       }");
 		if (listaFalse.size() > 0) {
-			str.append("\n       else {\n");
+			str.append("\n       else {");
 			for (AbstractCommand cmd: listaFalse) {
-				str.append("	").append(cmd.generateJavaCode());
+				str.append("\n	").append(cmd.generateJavaCode());
 			}
 			str.append("\n       }\n");
 		
