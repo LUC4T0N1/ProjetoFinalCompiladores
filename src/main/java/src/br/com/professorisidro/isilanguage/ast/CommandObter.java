@@ -15,7 +15,7 @@ public class CommandObter extends AbstractCommand {
     }
     @Override
     public String toString() {
-        return "CommandLeitura [id=" + id + "]";
+        return "CommandObter [id=" + id + "]";
     }
 
 }

@@ -18,7 +18,7 @@
           <option name="outputDir" value="D:\ProjetoFinalCompiladores\src\main\java" />
           <option name="libDir" value="" />
           <option name="encoding" value="" />
-          <option name="pkg" value="src.br.com.professorisidro.isilanguage.teste.testeparsers" />
+          <option name="pkg" value="src.br.com.professorisidro.isilanguage.parser.lib" />
           <option name="language" value="" />
         </PerGrammarGenerationSettings>
       </list>

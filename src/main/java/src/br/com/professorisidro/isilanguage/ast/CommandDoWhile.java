@@ -23,7 +23,7 @@ public class CommandDoWhile extends AbstractCommand {
     }
     @Override
     public String toString() {
-        return "CommandRepeticao [condition=" + condition + ", listaTrue=" + listaTrue + "]";
+        return "CommandRepeticaoDoWhile [condition=" + condition + ", listaTrue=" + listaTrue + "]";
     }
 
 

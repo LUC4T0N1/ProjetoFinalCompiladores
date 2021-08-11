@@ -4,8 +4,8 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import src.br.com.professorisidro.isilanguage.exceptions.IsiSemanticException;
 
-import src.br.com.professorisidro.isilanguage.teste.testeparsers.IsiLangLexer;
-import src.br.com.professorisidro.isilanguage.teste.testeparsers.IsiLangParser;
+import src.br.com.professorisidro.isilanguage.parser.lib.IsiLangLexer;
+import src.br.com.professorisidro.isilanguage.parser.lib.IsiLangParser;
 
 /* esta é a classe que é responsável por criar a interação com o usuário
  * instanciando nosso parser e apontando para o arquivo fonte

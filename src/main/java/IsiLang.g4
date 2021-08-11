@@ -16,6 +16,10 @@ grammar IsiLang;
 	import src.br.com.professorisidro.isilanguage.ast.CommandAdicionar;
 	import src.br.com.professorisidro.isilanguage.ast.CommandObter;
 	import src.br.com.professorisidro.isilanguage.ast.CommandAtribuirEObter;
+	import src.br.com.professorisidro.isilanguage.ast.CommandTamanho;
+	import src.br.com.professorisidro.isilanguage.ast.CommandPrintTamanho;
+
+
 	import java.util.ArrayList;
 	import java.util.Stack;
 }
@@ -32,12 +36,21 @@ grammar IsiLang;
 	private String _readID;
 	private String _readIDLista;
 	private String _writeID;
+	private String _condLeft;
+	private String _condRight;
 	private String _exprID;
 	private String _exprContent;
 	private String _exprDecision;
 	private ArrayList<AbstractCommand> listaTrue;
 	private ArrayList<AbstractCommand> listaFalse;
-	
+
+
+	public void validarCondicao(String condLeft, String condRight, String expr){
+    		if (!symbolTable.validarCondicao(condLeft, condRight)){
+    			throw new IsiSemanticException("Conditional expression " + expr + " is invalid (wrong types).");
+    		}
+    	}
+
 	public void verificaID(String id){
 		if (!symbolTable.exists(id)){
 			throw new IsiSemanticException("Symbol "+id+" not declared");
@@ -86,6 +99,13 @@ grammar IsiLang;
               }
           }
 
+      public void verificarLista(String id){
+                 IsiVariable var = (IsiVariable)symbolTable.get(id);
+                 if (var.getType() != 3 && var.getType() != 4 && var.getType() != 5){
+                     throw new IsiSemanticException("variable "+ id +" is not a list");
+                 }
+             }
+
 	public void exibeComandos(){
 		for (AbstractCommand c: program.getComandos()){
 			System.out.println(c);
@@ -105,6 +125,15 @@ inicio_e_fim_do_programa	: 'programa' declarar_variaveis bloco  'fimprog.'
               }
            } 
 		;
+
+tamanho_lista   :    'tamanho'
+                     ABRE_PARENTESES
+                     NOME_VARIAVEL{_readID = _input.LT(-1).getText(); verificarLista(_readID);verificaID(_readID); verificaValorID(_readID);}
+                     FECHA_PARENTESES
+                     PONTO_FINAL{
+                     CommandTamanho cmd = new CommandTamanho(_readID);
+                     stack.peek().add(cmd);
+                     };
 		
 declarar_variaveis    :  (declara_variavel)+
         ;
@@ -158,6 +187,7 @@ comandos : leitura
  		|  condicional
  		|  repeticao
  		|  obter
+ 		|  tamanho_lista
 		;
 
 obter	: NOME_VARIAVEL { _readID = _input.LT(-1).getText(); verificaID(_readID); verificaValorID(_readID);}
@@ -183,20 +213,29 @@ leitura	: 'leia' ABRE_PARENTESES
               }   
 			;
 			
-escrita	: 'escreva'
-                 ABRE_PARENTESES
-                 ( TEXTO { _writeID = _input.LT(-1).getText(); }
+escrita	: 'escreva' ABRE_PARENTESES
+                 (((TEXTO { _writeID = _input.LT(-1).getText(); }
                  | NOME_VARIAVEL { verificaID(_input.LT(-1).getText());
                   verificaValorID(_input.LT(-1).getText());
                   setarUsada(_input.LT(-1).getText());
 	                  _writeID = _input.LT(-1).getText();
-                     } )
+                     })
                  FECHA_PARENTESES
                  PONTO_FINAL
                {
                	  CommandEscrita cmd = new CommandEscrita(_writeID);
                	  stack.peek().add(cmd);
-               }
+               })|
+               ('tamanho'
+                ABRE_PARENTESES
+                NOME_VARIAVEL{_readID = _input.LT(-1).getText(); verificarLista(_readID);verificaID(_readID); verificaValorID(_readID);}
+                FECHA_PARENTESES
+                FECHA_PARENTESES
+                PONTO_FINAL
+               {
+                  CommandPrintTamanho cmd = new CommandPrintTamanho(_readID);
+                  stack.peek().add(cmd);
+               }))
 			;
 			
 atribuicao	:  (NOME_VARIAVEL { verificaID(_input.LT(-1).getText());
@@ -244,10 +283,10 @@ atribuicao	:  (NOME_VARIAVEL { verificaID(_input.LT(-1).getText());
 			
 			
 condicional  :  'se' ABRE_PARENTESES
-                    (NOME_VARIAVEL | NUMERO_REAL | INTEIRO)    { _exprDecision = _input.LT(-1).getText(); }
+                    (NOME_VARIAVEL | NUMERO_REAL | INTEIRO)    { _exprDecision = _input.LT(-1).getText(); _condLeft = _input.LT(-1).getText();}
                     OPERADORES_RELACIONAIS { _exprDecision += _input.LT(-1).getText(); }
-                    (NOME_VARIAVEL | NUMERO_REAL | INTEIRO) {_exprDecision += _input.LT(-1).getText(); }
-                    FECHA_PARENTESES
+                    (NOME_VARIAVEL | NUMERO_REAL | INTEIRO) {_exprDecision += _input.LT(-1).getText(); _condRight = _input.LT(-1).getText();}
+                    FECHA_PARENTESES{ validarCondicao(_condLeft, _condRight, _exprDecision);}
                     'entao'
                     ABRE_CHAVES
                     { curThread = new ArrayList<AbstractCommand>(); 
@@ -301,18 +340,19 @@ repeticao  :  ('enquanto' ABRE_PARENTESES
                         (comandos)+
 
                         FECHA_CHAVES
-                        {
-                           listaTrue = stack.pop();
-                           CommandDoWhile cmd = new CommandDoWhile(_exprDecision, listaTrue);
-                           stack.peek().add(cmd);
-                        }
+
                     'enquanto'
                     ABRE_PARENTESES
                     (NOME_VARIAVEL | NUMERO_REAL | INTEIRO)    { _exprDecision = _input.LT(-1).getText(); }
                     OPERADORES_RELACIONAIS { _exprDecision += _input.LT(-1).getText(); }
                     (NOME_VARIAVEL | NUMERO_REAL | INTEIRO) {_exprDecision += _input.LT(-1).getText(); }
                     FECHA_PARENTESES
-                    PONTO_FINAL)
+                    PONTO_FINAL
+                      {
+                           listaTrue = stack.pop();
+                           CommandDoWhile cmd = new CommandDoWhile(_exprDecision, listaTrue);
+                           stack.peek().add(cmd);
+                        })
             ;
 			
 expressoes		:  termo (OPERADORES  { _exprContent += _input.LT(-1).getText();} termo)*;

@@ -1,45 +1,27 @@
 programa
 
-  int b,c,d.
-  int a.
-  lista<int> x.
-  x.adc(2).
-  a := x.obter(0).
-  c := 2.
+    int x.
+    lista<int> a.
+	lista<texto> b.
+	lista<real> c, d.
 
-  escreva ("Programa Teste").
-  escreva ("Digite A").
-  leia (a).
-  leia (b).
+	a.adc(1).
+	b.adc("1").
+	c.adc(1).
 
-  se (c>2) entao
-  {
-  escreva(a).
-  }senao
-  {
-  escreva(a).
-  }
+	escreva(tamanho(a)).
+	x := b.obter(0).
+	escreva(x).
 
-  enquanto (c > 2) fazer
-  {
-    escreva(a).
-    escreva(a).
-    escreva(a).
-  }
+	x := a.obter(0).
+	escreva(x).
 
-    fazer
-    {
-      escreva(a).
-      escreva(a).
-      escreva(a).
-    }enquanto (c > 2).
+	se (x > 1) entao
+	{
+	escreva(x).
+	}senao{
+	escreva("menor").
+	}
 
-escreva ("C e igual a ").
-escreva (c).
-
-d := c + b.
-
-escreva ("D e igual a ").
-escreva (d).
 
 fimprog.

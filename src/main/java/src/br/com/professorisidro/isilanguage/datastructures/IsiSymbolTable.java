@@ -20,6 +20,50 @@ public class IsiSymbolTable {
 		return map.get(symbolName) != null;
 	}
 
+	public boolean validarCondicao(String condLeft, String condRight){
+		try {
+			Integer.parseInt(condLeft);
+			Integer.parseInt(condRight);
+			return true;
+		}
+		catch (NumberFormatException ignored){}
+		try {
+			Integer.parseInt(condLeft);
+			IsiVariable y = (IsiVariable) get(condRight);
+			return y.getType()==0;
+		}
+		catch (NumberFormatException ignored){}
+		try {
+			Integer.parseInt(condRight);
+			IsiVariable x = (IsiVariable) get(condLeft);
+			return x.getType()==0;
+		}
+		catch (NumberFormatException ignored){}
+		try {
+			Double.parseDouble(condLeft);
+			Double.parseDouble(condRight);
+			return true;
+		}catch (NumberFormatException ignored){}
+		try {
+			Double.parseDouble(condLeft);
+			IsiVariable y = (IsiVariable) get(condRight);
+			return y.getType()==2;
+		}
+		catch (NumberFormatException ignored){}
+		try {
+			Double.parseDouble(condRight);
+			IsiVariable x = (IsiVariable) get(condLeft);
+			return x.getType()==2;
+		}
+		catch (NumberFormatException ignored){}
+		try {
+			IsiVariable x = (IsiVariable) get(condLeft);
+			IsiVariable y = (IsiVariable) get(condRight);
+			return x.getType() == y.getType();
+		}catch (NumberFormatException ignored){}
+		return false;
+	}
+
 	public boolean initialized(String symbolName) {
 		return map.get(symbolName).isInitialized();
 	}

@@ -26,6 +26,7 @@ public class IsiVariable extends IsiSymbol {
 		return type;
 	}
 
+
 	public boolean verificaTipoELista(IsiVariable varLista) {
 		return (type == INT && varLista.type == LISTA_INT) || (type == REAL && varLista.type == LISTA_REAL) || (type == TEXT && varLista.type == LISTA_TEXTO);
 	}
