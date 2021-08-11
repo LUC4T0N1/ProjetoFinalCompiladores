@@ -1,26 +1,23 @@
 programa
 
-    int x.
-    lista<int> a.
-	lista<texto> b.
-	lista<real> c, d.
+    int a,b.
+	real x.
+	texto c, d.
 
-	a.adc(1).
-	b.adc("1").
-	c.adc(1).
 
-	escreva(tamanho(a)).
-	x := b.obter(0).
-	escreva(x).
+	x := 2.2.
+	c := "texto 1".
+	d := "texto 2".
 
-	x := a.obter(0).
-	escreva(x).
+	leia (a).
+	leia (b).
 
-	se (x > 1) entao
+	se (a > b) entao
 	{
-	escreva(x).
-	}senao{
-	escreva("menor").
+		a := a + 22.
+		escreva (d).
+	}senao {
+		escreva (x).
 	}
 
 

@@ -166,7 +166,8 @@ public class IsiLangLexer extends Lexer {
 	        }
 
 	    public void setarUsada(String id){
-	                symbolTable.get(id).setUsed(true);
+	                if(symbolTable.get(id)!= null)
+	                  symbolTable.get(id).setUsed(true);
 	            }
 
 	    public void verificaTipo(String id, String expr){

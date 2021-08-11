@@ -173,7 +173,8 @@ public class IsiLangParser extends Parser {
 	        }
 
 	    public void setarUsada(String id){
-	                symbolTable.get(id).setUsed(true);
+	                if(symbolTable.get(id)!= null)
+	                  symbolTable.get(id).setUsed(true);
 	            }
 
 	    public void verificaTipo(String id, String expr){
@@ -1165,7 +1166,7 @@ public class IsiLangParser extends Parser {
 				_errHandler.reportMatch(this);
 				consume();
 			}
-			 _exprDecision = _input.LT(-1).getText(); _condLeft = _input.LT(-1).getText();
+			 _exprDecision = _input.LT(-1).getText(); _condLeft = _input.LT(-1).getText(); setarUsada(_input.LT(-1).getText());
 			setState(168);
 			match(OPERADORES_RELACIONAIS);
 			 _exprDecision += _input.LT(-1).getText(); 
@@ -1179,7 +1180,7 @@ public class IsiLangParser extends Parser {
 				_errHandler.reportMatch(this);
 				consume();
 			}
-			_exprDecision += _input.LT(-1).getText(); _condRight = _input.LT(-1).getText();
+			_exprDecision += _input.LT(-1).getText(); _condRight = _input.LT(-1).getText(); setarUsada(_input.LT(-1).getText());
 			setState(172);
 			match(FECHA_PARENTESES);
 			 validarCondicao(_condLeft, _condRight, _exprDecision);

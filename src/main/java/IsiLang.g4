@@ -74,7 +74,8 @@ grammar IsiLang;
         }
 
     public void setarUsada(String id){
-                symbolTable.get(id).setUsed(true);
+                if(symbolTable.get(id)!= null)
+                  symbolTable.get(id).setUsed(true);
             }
 
     public void verificaTipo(String id, String expr){
@@ -283,9 +284,9 @@ atribuicao	:  (NOME_VARIAVEL { verificaID(_input.LT(-1).getText());
 			
 			
 condicional  :  'se' ABRE_PARENTESES
-                    (NOME_VARIAVEL | NUMERO_REAL | INTEIRO)    { _exprDecision = _input.LT(-1).getText(); _condLeft = _input.LT(-1).getText();}
+                    (NOME_VARIAVEL | NUMERO_REAL | INTEIRO)    { _exprDecision = _input.LT(-1).getText(); _condLeft = _input.LT(-1).getText(); setarUsada(_input.LT(-1).getText());}
                     OPERADORES_RELACIONAIS { _exprDecision += _input.LT(-1).getText(); }
-                    (NOME_VARIAVEL | NUMERO_REAL | INTEIRO) {_exprDecision += _input.LT(-1).getText(); _condRight = _input.LT(-1).getText();}
+                    (NOME_VARIAVEL | NUMERO_REAL | INTEIRO) {_exprDecision += _input.LT(-1).getText(); _condRight = _input.LT(-1).getText(); setarUsada(_input.LT(-1).getText());}
                     FECHA_PARENTESES{ validarCondicao(_condLeft, _condRight, _exprDecision);}
                     'entao'
                     ABRE_CHAVES
