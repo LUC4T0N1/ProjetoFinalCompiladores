@@ -9,7 +9,7 @@ import src.br.com.professorisidro.isilanguage.parser.lib.IsiLangParser;
 
 /* esta é a classe que é responsável por criar a interação com o usuário
  * instanciando nosso parser e apontando para o arquivo fonte
- * 
+ * '
  * Arquivo fonte: extensao .isi
  * 
  */
